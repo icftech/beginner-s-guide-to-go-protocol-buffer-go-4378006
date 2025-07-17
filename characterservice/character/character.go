@@ -3,6 +3,7 @@ package character
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -21,8 +22,15 @@ func GetCharacters() ([]Character, error) {
 
 	url := "https://bigstarcollectibles.com/api/characters/all"
 	log.Printf("url: %s\n", url)
-	
-	response, err := http.Get(url)
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+	req.Header.Set("User-Agent", "LinkedInLearning/1.1")
+
+	client := &http.Client{}
+	response, err := client.Do(req)
 	if err != nil {
 		return nil, errors.New("Get Characters response failed")
 	}
